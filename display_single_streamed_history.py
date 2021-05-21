@@ -8,6 +8,7 @@ METHOD = 2
 # 1: Track/Artist 	(Track then Artist)
 # 2: Artist/Tarck	(Artist then Track)
 
+
 def main():
 	# File Path to Streaming History
 	_file_path = "StreamingHistory0.json"
