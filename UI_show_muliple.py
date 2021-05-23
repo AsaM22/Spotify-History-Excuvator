@@ -47,7 +47,7 @@ class AppWindow(QMainWindow):
             _file_path = f"{folder_path}/StreamingHistory{str(count)}.json"
 
             # Gets the raw json data
-            with open(_file_path) as f:
+            with open(_file_path, encoding="utf8") as f:
                 data = json.load(f)
 
 
