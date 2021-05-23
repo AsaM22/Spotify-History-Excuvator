@@ -11,7 +11,7 @@ METHOD = 2
 
 def main():
 	# File Path to Streaming History
-	_file_path = "StreamingHistory0.json"
+	_file_path = "TestData/StreamingHistory0.json"
 
 
 	# Gets the raw json data
