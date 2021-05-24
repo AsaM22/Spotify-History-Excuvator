@@ -17,34 +17,31 @@ class AppWindow(QMainWindow):
         self.setGeometry(150,150, 500, 500)
         self.setWindowTitle("Display Streamed History")
         
+
         self.folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder')
         self.show_history()
 
-    def get_file(self):
-        return self.folderpath
 
     def show_history(self):
         ###################### CHANGE THIS NUMBER FROM (0-2) ###################### 
-        METHOD = 2      # TODO: Change this so that it is in an application
+        METHOD = 0      # TODO: Change this so that it is in an application
         # 0: Artist 		(Most played artist)
         # 1: Track/Artist 	(Track then Artist)
         # 2: Artist/Tarck	(Artist then Track)
 
-        # Folder path with streaming history files in it
-        folder_path = self.get_file()
 
         # Creates a list to append all the songs to
         myList = list()
 
         # Finds the total number of StreamingHistory files
-        file_count = len(glob.glob1(folder_path, "StreamingHistory*.json"))
+        file_count = len(glob.glob1(self.folderpath, "StreamingHistory*.json"))
 
 
         # Loops through the amout of files you have (example: 4 loops)
         for count in range(file_count):
 
             # Changes file path
-            _file_path = f"{folder_path}/StreamingHistory{str(count)}.json"
+            _file_path = f"{self.folderpath}/StreamingHistory{str(count)}.json"
 
             # Gets the raw json data
             with open(_file_path) as f:
@@ -72,16 +69,15 @@ class AppWindow(QMainWindow):
         # Ends the code
         exit()
 
-        
-
-def main():
-    app = QApplication(sys.argv)
-    win = AppWindow()
-
-    win.show()
-
-    sys.exit(app.exec_())
-
 
 if __name__ == "__main__":
-    main()
+        # App process
+    app = QApplication(sys.argv)
+    # Creates instance of the class
+    win = AppWindow()
+    
+    # Shows Window
+    win.show()
+    # Quits app
+    sys.exit(app.exec_())
+    
