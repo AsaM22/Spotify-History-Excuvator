@@ -80,4 +80,3 @@ if __name__ == "__main__":
     win.show()
     # Quits app
     sys.exit(app.exec_())
-    
