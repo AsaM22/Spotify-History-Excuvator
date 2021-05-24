@@ -30,12 +30,12 @@ class AppWindow(QMainWindow):
         
         self.directory_button = QPushButton('Select Folder', self)
         self.directory_button.adjustSize()
-        self.directory_button.move((self.screen_x*.5) - (self.directory_button.size().width()*.5), 50)
+        self.directory_button.move(int((self.screen_x*.5) - (self.directory_button.size().width()*.5)), 50)
         self.directory_button.clicked.connect(self.select_file_btn)
 
 
 
-    def file_calculate(self):
+    def file_calculate(self, selected_directory_path):
         
         ###################### CHANGE THIS NUMBER FROM (0-2) ###################### 
         METHOD = 0      # TODO: Change this so that it is in an application
@@ -48,14 +48,14 @@ class AppWindow(QMainWindow):
         myList = list()
 
         # Finds the total number of StreamingHistory files
-        file_count = len(glob.glob1(self.folderpath, "StreamingHistory*.json"))
+        file_count = len(glob.glob1(self.selected_directory_path, "StreamingHistory*.json"))
 
 
         # Loops through the amout of files you have (example: 4 loops)
         for count in range(file_count):
 
             # Changes file path
-            _file_path = f"{self.folderpath}/StreamingHistory{str(count)}.json"
+            _file_path = f"{self.selected_directory_path}/StreamingHistory{str(count)}.json"
 
             # Gets the raw json data
             with open(_file_path, encoding="utf8") as f:
@@ -86,6 +86,8 @@ class AppWindow(QMainWindow):
         # Lets user select a path to data folder
         self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
+        # Calls the functions to do magic
+        self.file_calculate(self.selected_directory_path)
 
 if __name__ == "__main__":
     # Starts app process
