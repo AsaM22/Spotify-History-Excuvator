@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox
+from PyQt5.QtCore import Qt
 import sys
 
 import json
@@ -35,10 +36,71 @@ class AppWindow(QMainWindow):
 
 
 
+
+        # creating check box
+        self.option1_cbx = QCheckBox("Most Played Artist", self)
+        self.option1_cbx.setGeometry(200, 150, 100, 30)
+  
+        # creating check box
+        self.option2_cbx = QCheckBox("Geek", self)
+        self.option2_cbx.setGeometry(200, 180, 100, 30)
+  
+        # creating check box
+        self.option3_cbx = QCheckBox(" Not a geek ?", self)
+        self.option3_cbx.setGeometry(200, 210, 100, 30)
+  
+        # calling the uncheck method if any check box state is changed
+        self.option1_cbx.stateChanged.connect(self.cbx_update)
+        self.option2_cbx.stateChanged.connect(self.cbx_update)
+        self.option3_cbx.stateChanged.connect(self.cbx_update)
+  
+
+    # uncheck method
+    def cbx_update(self, state):
+  
+        # checking if state is checked
+        if state == Qt.Checked:
+  
+            # if first check box is selected
+            if self.sender() == self.option1_cbx:
+  
+                # making other check box to uncheck
+                self.option2_cbx.setChecked(False)
+                self.option3_cbx.setChecked(False)
+
+                self.selected_method = 0
+  
+            # if second check box is selected
+            elif self.sender() == self.option2_cbx:
+  
+                # making other check box to uncheck
+                self.option1_cbx.setChecked(False)
+                self.option3_cbx.setChecked(False)
+  
+                self.selected_method = 1
+
+            # if third check box is selected
+            elif self.sender() == self.option3_cbx:
+  
+                # making other check box to uncheck
+                self.option1_cbx.setChecked(False)
+                self.option2_cbx.setChecked(False)
+
+                self.selected_method = 2
+
+
+    def select_file_btn(self):
+        # Lets user select a path to data folder
+        self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
+
+        # Calls the functions to do magic
+        self.file_calculate()
+
+
     def file_calculate(self):
         
-        ###################### CHANGE THIS NUMBER FROM (0-2) ###################### 
-        METHOD = 0      # TODO: Change this so that it is in an application
+        # Select which data to print
+        METHOD = self.selected_method
         # 0: Artist 		(Most played artist)
         # 1: Track/Artist 	(Track then Artist)
         # 2: Artist/Tarck	(Artist then Track)
@@ -82,14 +144,8 @@ class AppWindow(QMainWindow):
 
 
 
-    def select_file_btn(self):
-        # Lets user select a path to data folder
-        self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
-
-        # Calls the functions to do magic
-        self.file_calculate(self.selected_directory_path)
-
 if __name__ == "__main__":
+
     # Starts app process
     app = QApplication(sys.argv)
     # Creates instance of the class
@@ -97,5 +153,6 @@ if __name__ == "__main__":
     
     # Shows Window
     win.show()
+
     # Quits app
     sys.exit(app.exec_())
