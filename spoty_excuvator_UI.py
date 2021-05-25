@@ -72,11 +72,11 @@ class AppWindow(QMainWindow):
 
 
         # Setup Display button
-        self.directory_button = QPushButton('Display Data', self)
-        self.directory_button.setFont(QFont('Times', 20))
-        self.directory_button.adjustSize()
-        self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), 350)
-        self.directory_button.clicked.connect(self.file_calculate)
+        self.display_button = QPushButton('Display Data', self)
+        self.display_button.setFont(QFont('Times', 20))
+        self.display_button.adjustSize()
+        self.display_button.move(int((self.SCREEN_X*.5) - (self.display_button.size().width()*.5)), 350)
+        self.display_button.clicked.connect(self.file_calculate)
 
 
     def cbx_update(self, state):
