@@ -64,7 +64,6 @@ class AppWindow(QMainWindow):
         self.option3_cbx = QCheckBox("Track then Artist", self)
         self.option3_cbx.setGeometry(self.CBX_X, self.CBX_Y_3, self.CBX_WIDTH, self.CBX_HEIGHT)
   
-
         # Calls update method to uncheck other boxes
         self.option1_cbx.stateChanged.connect(self.cbx_update)
         self.option2_cbx.stateChanged.connect(self.cbx_update)
@@ -146,10 +145,15 @@ class AppWindow(QMainWindow):
 
 
             # Append based on the selected choice
-            for i in data:
-                if METHOD == self.CBX_OPTION_ARTIST: myList.append(i["artistName"])
-                elif METHOD == self.CBX_OPTION_TRACK_ARTIST: myList.append(f"{i['trackName']}  ---  {i['artistName']}")
-                elif METHOD == self.CBX_OPTION_ARTIST_TRACK: myList.append(f"{i['artistName']}  ---  {i['trackName']}")
+            if METHOD == self.CBX_OPTION_ARTIST:
+                for i in data:
+                    myList.append(i["artistName"])
+            elif METHOD == self.CBX_OPTION_TRACK_ARTIST:
+                for i in data:
+                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
+            elif METHOD == self.CBX_OPTION_ARTIST_TRACK:
+                for i in data:
+                    myList.append(f"{i['artistName']}  ---  {i['trackName']}")
 
 
         # Counts how many of each song is played
