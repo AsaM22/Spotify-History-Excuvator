@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
@@ -43,6 +43,15 @@ class AppWindow(QMainWindow):
         # Display button variables
         self.DISPLAY_BUTTON_Y: int = 400
 
+        # File success label
+        self.SUCCESS_LABEL_X: int = 350
+        self.SUCCESS_LABEL_Y: int = 90
+
+        
+        # Total time label
+        self.TOTAL_TIME_LABEL_X: int = 550
+        self.TOTAL_TIME_LABEL_Y: int = 150
+
         # Calls UI method
         self.initUI()
         
@@ -60,6 +69,16 @@ class AppWindow(QMainWindow):
         self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), self.DIRECTORY_BUTTON_Y)
         self.directory_button.clicked.connect(self.select_file_btn)
         
+        # Setup Success Label
+        self.success_label = QLabel("Selected Folder: Unsucessful", self)
+        self.success_label.adjustSize()
+        self.success_label.move(self.SUCCESS_LABEL_X, self.SUCCESS_LABEL_Y)
+
+
+        # Setup Total time Label total_listened
+        self.total_time_label = QLabel("Total time listened: 0 hours", self)
+        self.total_time_label.adjustSize()
+        self.total_time_label.move(self.TOTAL_TIME_LABEL_X, self.TOTAL_TIME_LABEL_Y)
 
         # Creates 3 checkboxes
         self.option1_cbx = QCheckBox("Most Played Artist", self)
@@ -76,6 +95,7 @@ class AppWindow(QMainWindow):
         self.option1_cbx.stateChanged.connect(self.cbx_update)
         self.option2_cbx.stateChanged.connect(self.cbx_update)
         self.option3_cbx.stateChanged.connect(self.cbx_update)
+        self.option4_cbx.stateChanged.connect(self.cbx_update)
 
 
         # Setup Display button
@@ -99,7 +119,7 @@ class AppWindow(QMainWindow):
                 self.option4_cbx.setChecked(False)
 
                 # Sets method selector variable
-                self.selected_method = self.CBX_OPTION_ARTIST
+                self.selected_method = int(self.CBX_OPTION_ARTIST)
   
             # If cbx 2 is selected
             elif self.sender() == self.option2_cbx:
@@ -110,7 +130,7 @@ class AppWindow(QMainWindow):
                 self.option4_cbx.setChecked(False)
   
                 # Sets method selector variable
-                self.selected_method = self.CBX_OPTION_TRACK_ARTIST
+                self.selected_method = int(self.CBX_OPTION_TRACK_ARTIST)
 
             # If cbx 3 is selected
             elif self.sender() == self.option3_cbx:
@@ -121,7 +141,7 @@ class AppWindow(QMainWindow):
                 self.option4_cbx.setChecked(False)
 
                 # Sets method selector variable
-                self.selected_method = self.CBX_OPTION_ARTIST_TRACK
+                self.selected_method = int(self.CBX_OPTION_ARTIST_TRACK)
             
             # If cbx 4 is selected
             elif self.sender() == self.option4_cbx:
@@ -132,65 +152,91 @@ class AppWindow(QMainWindow):
                 self.option3_cbx.setChecked(False)
 
                 # Sets method selector variable
-                self.selected_method = self.CBX_OPTION_TOTAL_ARTIST_TIME
+                self.selected_method = int(self.CBX_OPTION_TOTAL_ARTIST_TIME)
             
 
     def select_file_btn(self):
         # Lets user select a path to data folder
         self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
+        if self.selected_directory_path:
+            self.success_label.setText("Selected Folder: Sucessful!")
+
 
     def file_calculate(self):
-        # 0: Artist 		(Most played artist)
-        # 1: Track/Artist 	(Track then Artist)
-        # 2: Artist/Tarck	(Artist then Track)
 
-        # Creates a list to append all the songs to
-        myList = list()
+        def dict_sort(input_list: list) -> dict:
+            # Sorts the dict based on second element (asending)
+            return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])}
 
-        # Creates a dict for sorted data
-        sorted_data = dict()
 
         # Finds the total number of StreamingHistory files
         file_count = len(glob1(self.selected_directory_path, "StreamingHistory*.json"))
 
+        # Initalizes a list to append all the songs
+        myList = list()
+        # Initalizes a dict for sorted data
+        time_data = dict()
+        # Initalizes total listen time
+        self.total_listened = 0
 
+    
         # Loops through the amout of files you have (example: 4 loops)
         for count in range(file_count):
-
             # Changes file path
             _file_path = f"{self.selected_directory_path}/StreamingHistory{str(count)}.json"
 
             # Gets the raw json data
-            with open(_file_path, encoding="utf8") as f:
+            with open(_file_path, "r" , encoding="utf8") as f:
                 data = load(f)
+
+            # Loop through data and add to total_listened
+            for i in data:
+                self.total_listened += i["msPlayed"]
 
 
             # Append based on the selected choice
             if self.selected_method == self.CBX_OPTION_ARTIST:
                 for i in data:
                     myList.append(i["artistName"])
+
             elif self.selected_method == self.CBX_OPTION_TRACK_ARTIST:
                 for i in data:
                     myList.append(f"{i['trackName']}  ---  {i['artistName']}")
+
             elif self.selected_method == self.CBX_OPTION_ARTIST_TRACK:
                 for i in data:
                     myList.append(f"{i['artistName']}  ---  {i['trackName']}")
+
             elif self.selected_method == self.CBX_OPTION_TOTAL_ARTIST_TIME:
+                # Creates elements in the dict for each artist with default value to avoid repeats
                 for i in data:
-                    pass
+                    time_data[i['artistName']] = 0
+
+                # Loops over all records and adds the artist played time
+                for i in data:
+                    time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
+
+                # Sorts the dict (asending)
+                time_data = dict_sort(time_data)
 
 
-        # Counts how many of each song is played
-        counted_data = Counter(myList)
-
-        # Sorts the dict (asending)
-        sorted_data = {k: v for k, v in sorted(counted_data.items(), key=lambda item: item[1])}
+        # Updates the total time label
+        self.total_time_label.setText(f"Total time listened: '{self.total_listened/3600000:.2f} Hours")      
+        self.total_time_label.adjustSize()
 
 
-        # Displays the sorted list (#TimesPlayed/Artist/SongTitle)
-        for i in sorted_data:
-            print(sorted_data[i], "-", i)
+        # Print the time related data
+        if self.selected_method == self.CBX_OPTION_TOTAL_ARTIST_TIME:
+            for i in time_data:
+                print(time_data[i], " --- ", i)
+        else:
+            # Counts how many of each song is played
+            sorted_data = dict_sort(myList)
+
+            # Displays the sorted list (#TimesPlayed/Artist/SongTitle)
+            for i in sorted_data:
+                print(sorted_data[i], "-", i)
 
 
 
