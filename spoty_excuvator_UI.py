@@ -35,7 +35,7 @@ class AppWindow(QMainWindow):
 
 
 
-    def file_calculate(self, selected_directory_path):
+    def file_calculate(self):
         
         ###################### CHANGE THIS NUMBER FROM (0-2) ###################### 
         METHOD = 0      # TODO: Change this so that it is in an application
