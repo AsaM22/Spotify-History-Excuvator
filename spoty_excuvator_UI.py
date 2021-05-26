@@ -51,7 +51,6 @@ class AppWindow(QMainWindow):
         # File success label
         self.SUCCESS_LABEL_X: int = 350
         self.SUCCESS_LABEL_Y: int = 90
-
         
         # Total time label
         self.TOTAL_TIME_LABEL_X: int = 550
