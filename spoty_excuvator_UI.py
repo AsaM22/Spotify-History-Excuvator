@@ -15,6 +15,14 @@ class AppWindow(QMainWindow):
         # Calls super constructor
         super(AppWindow, self).__init__()
 
+        # Calls Variable method
+        self.initVar()
+
+        # Calls UI method
+        self.initUI()
+        
+        
+    def initVar(self):
         # Screen variables
         self.WINDOW_TITLE: str = "Spoty Excuvator"
         self.SCREEN_OFFSET_X: int = 150
@@ -22,11 +30,8 @@ class AppWindow(QMainWindow):
         self.SCREEN_X: int = 900
         self.SCREEN_Y: int = 600
 
-        # Avoids magic numbers
-        self.CBX_OPTION_ARTIST: int = 0
-        self.CBX_OPTION_TRACK_ARTIST: int = 1
-        self.CBX_OPTION_ARTIST_TRACK: int = 2
-        self.CBX_OPTION_TOTAL_ARTIST_TIME: int = 3
+        # Button fonts
+        self.BUTTON_FONT = 'Lucida Grande'
 
         # Directory button variables
         self.DIRECTORY_BUTTON_Y: int = 50
@@ -52,19 +57,16 @@ class AppWindow(QMainWindow):
         self.TOTAL_TIME_LABEL_X: int = 550
         self.TOTAL_TIME_LABEL_Y: int = 150
 
-        # Calls UI method
-        self.initUI()
-        
 
     def initUI(self):
         # Setup screen
         self.setGeometry(self.SCREEN_OFFSET_X, self.SCREEN_OFFSET_Y, self.SCREEN_X, self.SCREEN_Y)
         self.setWindowTitle(self.WINDOW_TITLE)
-        
+
 
         # Setup select folder button
         self.directory_button = QPushButton('Select Downloaded Spotify Data Folder', self)
-        self.directory_button.setFont(QFont('Sans-serif', 18))
+        self.directory_button.setFont(QFont(self.BUTTON_FONT, 18))
         self.directory_button.adjustSize()
         self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), self.DIRECTORY_BUTTON_Y)
         self.directory_button.clicked.connect(self.select_file_btn)
@@ -79,6 +81,7 @@ class AppWindow(QMainWindow):
         self.total_time_label = QLabel("Total time listened: 0 hours", self)
         self.total_time_label.adjustSize()
         self.total_time_label.move(self.TOTAL_TIME_LABEL_X, self.TOTAL_TIME_LABEL_Y)
+
 
         # Creates 3 checkboxes
         self.option1_cbx = QCheckBox("Most Played Artist", self)
@@ -100,7 +103,7 @@ class AppWindow(QMainWindow):
 
         # Setup Display button
         self.display_button = QPushButton('Display Data', self)
-        self.display_button.setFont(QFont('Times', 20))
+        self.display_button.setFont(QFont(self.BUTTON_FONT, 20))
         self.display_button.adjustSize()
         self.display_button.move(int((self.SCREEN_X*.5) - (self.display_button.size().width()*.5)), self.DISPLAY_BUTTON_Y)
         self.display_button.clicked.connect(self.file_calculate)
@@ -117,9 +120,6 @@ class AppWindow(QMainWindow):
                 self.option2_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
                 self.option4_cbx.setChecked(False)
-
-                # Sets method selector variable
-                self.selected_method = int(self.CBX_OPTION_ARTIST)
   
             # If cbx 2 is selected
             elif self.sender() == self.option2_cbx:
@@ -128,9 +128,6 @@ class AppWindow(QMainWindow):
                 self.option1_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
                 self.option4_cbx.setChecked(False)
-  
-                # Sets method selector variable
-                self.selected_method = int(self.CBX_OPTION_TRACK_ARTIST)
 
             # If cbx 3 is selected
             elif self.sender() == self.option3_cbx:
@@ -139,9 +136,6 @@ class AppWindow(QMainWindow):
                 self.option1_cbx.setChecked(False)
                 self.option2_cbx.setChecked(False)
                 self.option4_cbx.setChecked(False)
-
-                # Sets method selector variable
-                self.selected_method = int(self.CBX_OPTION_ARTIST_TRACK)
             
             # If cbx 4 is selected
             elif self.sender() == self.option4_cbx:
@@ -150,9 +144,6 @@ class AppWindow(QMainWindow):
                 self.option1_cbx.setChecked(False)
                 self.option2_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
-
-                # Sets method selector variable
-                self.selected_method = int(self.CBX_OPTION_TOTAL_ARTIST_TIME)
             
 
     def select_file_btn(self):
@@ -196,19 +187,20 @@ class AppWindow(QMainWindow):
 
 
             # Append based on the selected choice
-            if self.selected_method == self.CBX_OPTION_ARTIST:
+            if self.option1_cbx.isChecked():
                 for i in data:
                     myList.append(i["artistName"])
 
-            elif self.selected_method == self.CBX_OPTION_TRACK_ARTIST:
+            elif self.option2_cbx.isChecked:
                 for i in data:
                     myList.append(f"{i['trackName']}  ---  {i['artistName']}")
 
-            elif self.selected_method == self.CBX_OPTION_ARTIST_TRACK:
+            elif self.option3_cbx.isChecked:
                 for i in data:
                     myList.append(f"{i['artistName']}  ---  {i['trackName']}")
+                    
 
-            elif self.selected_method == self.CBX_OPTION_TOTAL_ARTIST_TIME:
+            elif self.option4_cbx.isChecked:
                 # Creates elements in the dict for each artist with default value to avoid repeats
                 for i in data:
                     time_data[i['artistName']] = 0
@@ -222,12 +214,12 @@ class AppWindow(QMainWindow):
 
 
         # Updates the total time label
-        self.total_time_label.setText(f"Total time listened: '{self.total_listened/3600000:.2f} Hours")      
+        self.total_time_label.setText(f"Total time listened: {self.total_listened/3600000:.2f} Hours")      
         self.total_time_label.adjustSize()
 
 
         # Print the time related data
-        if self.selected_method == self.CBX_OPTION_TOTAL_ARTIST_TIME:
+        if self.option4_cbx.isChecked:
             for i in time_data:
                 print(time_data[i], " --- ", i)
         else:

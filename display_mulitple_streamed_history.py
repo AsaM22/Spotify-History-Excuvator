@@ -14,7 +14,7 @@ METHOD = 2
 def main():
 
 	# Folder path with streaming history files in it
-	folder_path = "TestData"
+	folder_path = "/Users/asa/Desktop/Code/SpotifyDisplayer"
 
 	# Creates a list to append all the songs to
 	myList = list()
@@ -55,4 +55,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
