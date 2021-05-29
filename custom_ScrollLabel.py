@@ -2,36 +2,34 @@ from PyQt5.QtWidgets import QLabel, QScrollArea, QWidget, QVBoxLayout
 from PyQt5.QtCore import Qt
 
 
-# class for scrollable label
-class ScrollLabel(QScrollArea):
 
-	# constructor
+class ScrollLabel(QScrollArea):
 	def __init__(self, *args, **kwargs):
 		QScrollArea.__init__(self, *args, **kwargs)
 
-		# making widget resizable
+		# Makes widget resizable
 		self.setWidgetResizable(True)
 
-		# making qwidget object
+		# Creates qwidget object
 		content = QWidget(self)
 		self.setWidget(content)
 
-		# vertical box layout
+		# Creates Vertical box layout
 		lay = QVBoxLayout(content)
 
-		# creating label
+		# Creates label
 		self.label = QLabel(content)
 
-		# setting alignment to the text
+		# Sets alignment to the text
 		self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
-		# making label multi-line
+		# Makes label multi-line
 		self.label.setWordWrap(True)
 
-		# adding label to the layout
+		# Adds label to the layout
 		lay.addWidget(self.label)
 
-	# the setText method
+	# Creates setText method
 	def setText(self, text):
 		# setting text to the label
 		self.label.setText(text)

@@ -54,14 +54,15 @@ class AppWindow(QMainWindow):
         self.DISPLAY_BUTTON_X: int = 210
         self.DISPLAY_BUTTON_Y: int = 400
 
-        # File success label
+        # File success label variables
         self.SUCCESS_LABEL_X: int = 350
         self.SUCCESS_LABEL_Y: int = 90
         
-        # Total time label
+        # Total time label variables
         self.TOTAL_TIME_LABEL_X: int = 550
         self.TOTAL_TIME_LABEL_Y: int = 150
 
+        # Scrollable Label variables
         self.SCROLL_DISPLAY_X: int = 450
         self.SCROLL_DISPLAY_Y: int = self.TOTAL_TIME_LABEL_Y + 20
         self.SCROLL_DISPLAY_WIDTH: int = 400
@@ -81,6 +82,7 @@ class AppWindow(QMainWindow):
         self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), self.DIRECTORY_BUTTON_Y)
         self.directory_button.clicked.connect(self.select_file_btn)
         
+
         # Setup Success Label
         self.success_label = QLabel("Selected Folder: Unsucessful", self)
         self.success_label.adjustSize()
@@ -130,7 +132,7 @@ class AppWindow(QMainWindow):
   
             # If cbx 1 is selected
             if self.sender() == self.option1_cbx:
-  
+
                 # Unchecks other boxes
                 self.option2_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
@@ -138,7 +140,7 @@ class AppWindow(QMainWindow):
   
             # If cbx 2 is selected
             elif self.sender() == self.option2_cbx:
-  
+
                 # Unchecks other boxes
                 self.option1_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
@@ -165,13 +167,14 @@ class AppWindow(QMainWindow):
         # Lets user select a path to data folder
         self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
+        # Updates the file successfully found label
         if self.selected_directory_path:
             self.success_label.setText("Selected Folder: Sucessful!")
 
 
     def file_calculate(self):
 
-        def dict_sort(input_list: list) -> dict:
+        def dict_count_sort(input_list: list) -> dict:
             # Sorts the dict based on second element (asending)
             return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
 
@@ -184,6 +187,7 @@ class AppWindow(QMainWindow):
             # Creates temp string
             temp_str = "".join(str(i) + "\n" for i in input_list)
 
+            # Updates text for scroll label
             self.scroll_label.setText(temp_str)
 
 
@@ -195,7 +199,7 @@ class AppWindow(QMainWindow):
         # Initalizes a dict for sorted data
         time_data = dict()
         # Initalizes total listen time
-        self.total_listened_ms = 0
+        total_listened_ms = 0
 
     
         # Loops through the amout of files you have (example: 4 loops)
@@ -210,21 +214,18 @@ class AppWindow(QMainWindow):
 
             # Loop through data and add to total_listened_ms
             for i in data:
-                self.total_listened_ms += i["msPlayed"]
+                total_listened_ms += i["msPlayed"]
 
 
             # Append based on the selected choice
             if self.option1_cbx.isChecked():
-                for i in data:
-                    myList.append(i["artistName"])
+                myList = [i["artistName"] for i in data]
 
-            elif self.option2_cbx.isChecked():
-                for i in data:
-                    myList.append(f"{i['artistName']}  ---  {i['trackName']}")
+            elif self.option2_cbx.isChecked():                
+                myList = [f"{i['artistName']}  ---  {i['trackName']}" for i in data]
 
             elif self.option3_cbx.isChecked():
-                for i in data:
-                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
+                myList = [f"{i['trackName']}  ---  {i['artistName']}" for i in data]
                     
             elif self.option4_cbx.isChecked():
                 # Creates elements in the dict for each artist with default value to avoid repeats
@@ -236,20 +237,23 @@ class AppWindow(QMainWindow):
                     time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
 
                 # Sorts the dict (asending)
-                time_data = dict_sort(time_data)
+                time_data = dict_count_sort(time_data)
 
 
         # Updates the total time listened label
-        update_total_time(self.total_listened_ms)
+        update_total_time(total_listened_ms)
         
 
         # Print the time related data
         if self.option4_cbx.isChecked():
-            for i in time_data:
-                scroll_print(time_data[i], " --- ", i)
+            # Creates a list of strings
+            temp_lst = [str(time_data[i]) + " --- " + i for i in time_data]
+
+            # Print to Scroll label
+            scroll_print(temp_lst)
         else:
-            # Counts how many of each song is played
-            sorted_data = dict_sort(myList)
+            # Sorts and Counts how many of each song is played
+            sorted_data = dict_count_sort(myList)
 
             # Creates a list of strings
             temp_lst = [str(sorted_data[i]) + " - " + i for i in sorted_data]
