@@ -14,6 +14,15 @@ from collections import Counter
 from custom_ScrollLabel import ScrollLabel
 
 
+# TODO: 
+# 1: Needs to have check so they have selected everything before submitting display
+# 2: Try-Catch so the app doesn't crash
+# 3: README.md
+# 4: Class/Function Docstring
+# 5: Code Cleanup
+# 6: Pyinstaller
+# 7: Public on Github 
+
 
 class AppWindow(QMainWindow):
     def __init__(self):
