@@ -219,13 +219,16 @@ class AppWindow(QMainWindow):
 
             # Append based on the selected choice
             if self.option1_cbx.isChecked():
-                myList = [i["artistName"] for i in data]
+                for i in data:
+                    myList.append(i["artistName"]) 
 
-            elif self.option2_cbx.isChecked():                
-                myList = [f"{i['artistName']}  ---  {i['trackName']}" for i in data]
+            elif self.option2_cbx.isChecked():
+                for i in data:
+                    myList.append(f"{i['artistName']}  ---  {i['trackName']}")                
 
             elif self.option3_cbx.isChecked():
-                myList = [f"{i['trackName']}  ---  {i['artistName']}" for i in data]
+                for i in data:
+                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
                     
             elif self.option4_cbx.isChecked():
                 # Creates elements in the dict for each artist with default value to avoid repeats
@@ -236,21 +239,22 @@ class AppWindow(QMainWindow):
                 for i in data:
                     time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
 
-                # Sorts the dict (asending)
-                time_data = dict_count_sort(time_data)
-
-
+                
         # Updates the total time listened label
         update_total_time(total_listened_ms)
         
 
         # Print the time related data
         if self.option4_cbx.isChecked():
+            # Sorts the dict (asending)
+            time_data = dict_count_sort(time_data)
+
             # Creates a list of strings
             temp_lst = [str(time_data[i]) + " --- " + i for i in time_data]
 
             # Print to Scroll label
             scroll_print(temp_lst)
+
         else:
             # Sorts and Counts how many of each song is played
             sorted_data = dict_count_sort(myList)
