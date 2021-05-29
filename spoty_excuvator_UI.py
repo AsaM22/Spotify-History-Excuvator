@@ -1,12 +1,17 @@
+# PyQt5 module
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
 
+# Files handling and counting
 from json import load
-from collections import Counter
 from glob import glob1
+from collections import Counter
+
+# Imports Scroll Label
+from custom_ScrollLabel import ScrollLabel
 
 
 
@@ -25,13 +30,13 @@ class AppWindow(QMainWindow):
     def initVar(self):
         # Screen variables
         self.WINDOW_TITLE: str = "Spoty Excuvator"
-        self.SCREEN_OFFSET_X: int = 150
-        self.SCREEN_OFFSET_Y: int = 150     
-        self.SCREEN_X: int = 900
-        self.SCREEN_Y: int = 600
+        self.SCREEN_OFFSET_X: int = 175
+        self.SCREEN_OFFSET_Y: int = 125     
+        self.SCREEN_X: int = 950
+        self.SCREEN_Y: int = 650
 
         # Button fonts
-        self.BUTTON_FONT = 'Lucida Grande'
+        self.BUTTON_FONT: str = 'Lucida Grande'
 
         # Directory button variables
         self.DIRECTORY_BUTTON_Y: int = 50
@@ -46,6 +51,7 @@ class AppWindow(QMainWindow):
         self.CBX_HEIGHT: int = 30
 
         # Display button variables
+        self.DISPLAY_BUTTON_X: int = 210
         self.DISPLAY_BUTTON_Y: int = 400
 
         # File success label
@@ -55,6 +61,11 @@ class AppWindow(QMainWindow):
         # Total time label
         self.TOTAL_TIME_LABEL_X: int = 550
         self.TOTAL_TIME_LABEL_Y: int = 150
+
+        self.SCROLL_DISPLAY_X: int = 450
+        self.SCROLL_DISPLAY_Y: int = self.TOTAL_TIME_LABEL_Y + 20
+        self.SCROLL_DISPLAY_WIDTH: int = 400
+        self.SCROLL_DISPLAY_HEIGHT: int = 475
 
 
     def initUI(self):
@@ -76,7 +87,7 @@ class AppWindow(QMainWindow):
         self.success_label.move(self.SUCCESS_LABEL_X, self.SUCCESS_LABEL_Y)
 
 
-        # Setup Total time Label total_listened
+        # Setup Total time Label total_listened_ms_ms_ms
         self.total_time_label = QLabel("Total time listened: 0 hours", self)
         self.total_time_label.adjustSize()
         self.total_time_label.move(self.TOTAL_TIME_LABEL_X, self.TOTAL_TIME_LABEL_Y)
@@ -104,8 +115,13 @@ class AppWindow(QMainWindow):
         self.display_button = QPushButton('Display Data', self)
         self.display_button.setFont(QFont(self.BUTTON_FONT, 20))
         self.display_button.adjustSize()
-        self.display_button.move(int((self.SCREEN_X*.5) - (self.display_button.size().width()*.5)), self.DISPLAY_BUTTON_Y)
+        self.display_button.move(self.DISPLAY_BUTTON_X, self.DISPLAY_BUTTON_Y)
         self.display_button.clicked.connect(self.file_calculate)
+
+
+		# Creates Scroll label
+        self.scroll_label = ScrollLabel(self)
+        self.scroll_label.setGeometry(self.SCROLL_DISPLAY_X, self.SCROLL_DISPLAY_Y, self.SCROLL_DISPLAY_WIDTH, self.SCROLL_DISPLAY_HEIGHT)
 
 
     def cbx_update(self, state):
@@ -157,7 +173,18 @@ class AppWindow(QMainWindow):
 
         def dict_sort(input_list: list) -> dict:
             # Sorts the dict based on second element (asending)
-            return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])}
+            return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
+
+        def update_total_time(input_time_ms: float) -> None:
+            # Updates the total time label
+            self.total_time_label.setText(f"Total time listened: {input_time_ms/3600000:.2f} Hours")      
+            self.total_time_label.adjustSize()            
+
+        def scroll_print(input_list: list) -> None:
+            # Creates temp string
+            temp_str = "".join(str(i) + "\n" for i in input_list)
+
+            self.scroll_label.setText(temp_str)
 
 
         # Finds the total number of StreamingHistory files
@@ -168,7 +195,7 @@ class AppWindow(QMainWindow):
         # Initalizes a dict for sorted data
         time_data = dict()
         # Initalizes total listen time
-        self.total_listened = 0
+        self.total_listened_ms = 0
 
     
         # Loops through the amout of files you have (example: 4 loops)
@@ -180,9 +207,10 @@ class AppWindow(QMainWindow):
             with open(_file_path, "r" , encoding="utf8") as f:
                 data = load(f)
 
-            # Loop through data and add to total_listened
+
+            # Loop through data and add to total_listened_ms
             for i in data:
-                self.total_listened += i["msPlayed"]
+                self.total_listened_ms += i["msPlayed"]
 
 
             # Append based on the selected choice
@@ -190,16 +218,15 @@ class AppWindow(QMainWindow):
                 for i in data:
                     myList.append(i["artistName"])
 
-            elif self.option2_cbx.isChecked:
-                for i in data:
-                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
-
-            elif self.option3_cbx.isChecked:
+            elif self.option2_cbx.isChecked():
                 for i in data:
                     myList.append(f"{i['artistName']}  ---  {i['trackName']}")
-                    
 
-            elif self.option4_cbx.isChecked:
+            elif self.option3_cbx.isChecked():
+                for i in data:
+                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
+                    
+            elif self.option4_cbx.isChecked():
                 # Creates elements in the dict for each artist with default value to avoid repeats
                 for i in data:
                     time_data[i['artistName']] = 0
@@ -212,23 +239,23 @@ class AppWindow(QMainWindow):
                 time_data = dict_sort(time_data)
 
 
-        # Updates the total time label
-        self.total_time_label.setText(f"Total time listened: {self.total_listened/3600000:.2f} Hours")      
-        self.total_time_label.adjustSize()
-
+        # Updates the total time listened label
+        update_total_time(self.total_listened_ms)
+        
 
         # Print the time related data
-        if self.option4_cbx.isChecked:
+        if self.option4_cbx.isChecked():
             for i in time_data:
-                print(time_data[i], " --- ", i)
+                scroll_print(time_data[i], " --- ", i)
         else:
             # Counts how many of each song is played
             sorted_data = dict_sort(myList)
 
-            # Displays the sorted list (#TimesPlayed/Artist/SongTitle)
-            for i in sorted_data:
-                print(sorted_data[i], "-", i)
+            # Creates a list of strings
+            temp_lst = [str(sorted_data[i]) + " - " + i for i in sorted_data]
 
+            # Print to Scroll label
+            scroll_print(temp_lst)
 
 
 if __name__ == "__main__":
