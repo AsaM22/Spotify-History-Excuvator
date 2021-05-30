@@ -1,5 +1,5 @@
 # Spoty Excuvator
-### (Mac & Windows)
+# (Mac & Windows)
 
 App that lets you go "analyze" your Spotify streaming history
 
