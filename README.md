@@ -5,7 +5,7 @@
 App that lets you go "analyze" your Spotify streaming history
 
 
-### Before using the app:
+## Before using the app:
 1. [Download Python3 on your computer](https://www.python.org/downloads/)
 2. [Download your Spotify data](https://www.spotify.com/us/account/privacy/)
     * Link should take you to "Privacy Settings" Tab.
@@ -16,7 +16,7 @@ App that lets you go "analyze" your Spotify streaming history
 
 
 
-### How to run the app (Mac):
+## How to run the app (Mac):
 1. Using Terminal (No other downloads/apps needed)
     * Move the downloaded app folder to Desktop
     * Press Command+Spacebar -> Open spotlight search
@@ -29,7 +29,7 @@ App that lets you go "analyze" your Spotify streaming history
 
 
 
-### How to run the app (Windows):
+## How to run the app (Windows):
 1. Using Command Prompt (No other downloads/apps needed)
     * Move the downloaded app folder to Desktop
     * Window key -> Open Windows search
@@ -42,7 +42,7 @@ App that lets you go "analyze" your Spotify streaming history
 
 
 
-### How to use the App:
+## How to use the App:
 1. Open file and run it (See above on how to run the app)
 2. Click the "Select Spotify Folder"
 3. Find and select the folder that you downloaded from Spotify
@@ -54,7 +54,7 @@ App that lets you go "analyze" your Spotify streaming history
 
 
 
-### Understanding your data:
+## Understanding your data:
 After displaying your data
 1. If you selected "Most Played Artist" checkbox:
 ..* This will display the artist and how many times you have listened to them (sorted)
