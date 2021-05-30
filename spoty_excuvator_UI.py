@@ -1,6 +1,6 @@
 # PyQt5 module
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
@@ -82,6 +82,7 @@ class AppWindow(QMainWindow):
         # Setup screen
         self.setGeometry(self.SCREEN_OFFSET_X, self.SCREEN_OFFSET_Y, self.SCREEN_X, self.SCREEN_Y)
         self.setWindowTitle(self.WINDOW_TITLE)
+        self.setStyleSheet("background-color: #DAD7D7;")
 
 
         # Setup select folder button
@@ -94,6 +95,7 @@ class AppWindow(QMainWindow):
 
         # Setup Success Label
         self.success_label = QLabel("Selected Folder: Unsucessful", self)
+        self.success_label.setStyleSheet("color: #F61313; font-size: 15px;")
         self.success_label.adjustSize()
         self.success_label.move(self.SUCCESS_LABEL_X, self.SUCCESS_LABEL_Y)
 
@@ -135,7 +137,7 @@ class AppWindow(QMainWindow):
         self.scroll_label.setGeometry(self.SCROLL_DISPLAY_X, self.SCROLL_DISPLAY_Y, self.SCROLL_DISPLAY_WIDTH, self.SCROLL_DISPLAY_HEIGHT)
 
 
-    def cbx_update(self, state):
+    def cbx_update(self, state) -> None:
         # Checks if state is changed
         if state == Qt.Checked:
   
@@ -172,17 +174,29 @@ class AppWindow(QMainWindow):
                 self.option3_cbx.setChecked(False)
             
 
-    def select_file_btn(self):
+    # def show_warning(self, input_text: str) -> None:
+    #     message_box = QMessageBox()
+    #     message_box.setWindowTitle("Warning!")
+    #     message_box.setIcon(QMessageBox.Warning)
+    #     message_box.setText(input_text)
+
+    #     message_box.exec_()
+
+
+
+    def select_file_btn(self) -> None:
         # Lets user select a path to data folder
         self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
         # Updates the file successfully found label
         if self.selected_directory_path:
+            self.success_label.setStyleSheet("color: green; font-size: 15px;")
             self.success_label.setText("Selected Folder: Sucessful!")
 
 
-    def file_calculate(self):
+    def file_calculate(self) -> None:
 
+        # self.show_warning("Please make sure the corrent file has been selected")
         def dict_count_sort(input_list: list) -> dict:
             # Sorts the dict based on second element (asending)
             return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
@@ -284,5 +298,5 @@ if __name__ == "__main__":
     # Shows Window
     win.show()
 
-    # Quits app
+    # Quits app correctly
     sys.exit(app.exec_())
