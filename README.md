@@ -15,6 +15,7 @@ App that lets you go "analyze" your Spotify streaming history
 3. Clone repo OR download "spoty_exuvator_UI.py" (Everything required is in 1 file.)
 
 
+
 ### How to run the app (Mac):
 1. Using Terminal (No other downloads/apps needed)
     * Move the downloaded app folder to Desktop
@@ -27,6 +28,7 @@ App that lets you go "analyze" your Spotify streaming history
       * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
 
 
+
 ### How to run the app (Windows):
 1. Using Command Prompt (No other downloads/apps needed)
     * Move the downloaded app folder to Desktop
@@ -35,8 +37,9 @@ App that lets you go "analyze" your Spotify streaming history
     * Type "Python3 " then drag the "spoty_excuvato_UI.py" file into Command Prompt (this will copy file path)
     * Press Enter to run the app
 2. Using text exitor
-    1. [Sublime Text](https://www.sublimetext.com/download)
-      * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
+    . [Sublime Text](https://www.sublimetext.com/download)
+        * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
+
 
 
 ### How to use the App:
@@ -48,6 +51,7 @@ App that lets you go "analyze" your Spotify streaming history
 5. Press the "Display Data"
     * The scrollable label should have your data displayed
 6. Label above scroll area displays total time listened
+
 
 
 ### Understanding your data:
