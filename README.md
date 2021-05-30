@@ -24,8 +24,8 @@ App that lets you go "analyze" your Spotify streaming history
     * Type "Python3 " then drag the "spoty_excuvato_UI.py" file into terminal (this will copy file path)
     * Press Enter/Return to run the app
 2. Using text exitor
-  1. [Sublime Text](https://www.sublimetext.com/download)
-      * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
+    * [Sublime Text](https://www.sublimetext.com/download)
+    * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
 
 
 
@@ -37,8 +37,8 @@ App that lets you go "analyze" your Spotify streaming history
     * Type "Python3 " then drag the "spoty_excuvato_UI.py" file into Command Prompt (this will copy file path)
     * Press Enter to run the app
 2. Using text exitor
-    . [Sublime Text](https://www.sublimetext.com/download)
-        * [Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
+    *[Sublime Text](https://www.sublimetext.com/download) 
+    *[Run python3 on sublime text](https://medium.com/@hariyanto.tan95/set-up-sublime-text-3-to-use-python-3-c845b742c720)
 
 
 
