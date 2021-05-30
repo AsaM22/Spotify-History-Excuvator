@@ -1,6 +1,7 @@
 # PyQt5 module
+from typing import cast
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox, QFileDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
@@ -30,13 +31,13 @@ class AppWindow(QMainWindow):
         super(AppWindow, self).__init__()
 
         # Calls Variable method
-        self.initVar()
+        self.initUIVar()
 
         # Calls UI method
         self.initUI()
         
         
-    def initVar(self):
+    def initUIVar(self):
         # Screen variables
         self.WINDOW_TITLE: str = "Spoty Excuvator"
         self.SCREEN_OFFSET_X: int = 175
@@ -92,6 +93,7 @@ class AppWindow(QMainWindow):
         self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), self.DIRECTORY_BUTTON_Y)
         self.directory_button.clicked.connect(self.select_file_btn)
         
+        self.selected_directory_path = None
 
         # Setup Success Label
         self.success_label = QLabel("Selected Folder: Unsucessful", self)
@@ -174,19 +176,19 @@ class AppWindow(QMainWindow):
                 self.option3_cbx.setChecked(False)
             
 
-    # def show_warning(self, input_text: str) -> None:
-    #     message_box = QMessageBox()
-    #     message_box.setWindowTitle("Warning!")
-    #     message_box.setIcon(QMessageBox.Warning)
-    #     message_box.setText(input_text)
+    def show_warning(self, input_text: str) -> None:
+        message_box = QMessageBox()
+        message_box.setWindowTitle("Warning!")
+        message_box.setIcon(QMessageBox.Warning)
+        message_box.setText(input_text)
 
-    #     message_box.exec_()
+        message_box.exec_()
 
 
 
     def select_file_btn(self) -> None:
         # Lets user select a path to data folder
-        self.selected_directory_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
+        self.selected_directory_path = QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
         # Updates the file successfully found label
         if self.selected_directory_path:
@@ -195,98 +197,106 @@ class AppWindow(QMainWindow):
 
 
     def file_calculate(self) -> None:
-
-        # self.show_warning("Please make sure the corrent file has been selected")
-        def dict_count_sort(input_list: list) -> dict:
-            # Sorts the dict based on second element (asending)
-            return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
-
-        def update_total_time(input_time_ms: float) -> None:
-            # Updates the total time label
-            self.total_time_label.setText(f"Total time listened: {input_time_ms/3600000:.2f} Hours")      
-            self.total_time_label.adjustSize()            
-
-        def scroll_print(input_list: list) -> None:
-            # Creates temp string
-            temp_str = "".join(str(i) + "\n" for i in input_list)
-
-            # Updates text for scroll label
-            self.scroll_label.setText(temp_str)
-
-
-        # Finds the total number of StreamingHistory files
-        file_count = len(glob1(self.selected_directory_path, "StreamingHistory*.json"))
-
-        # Initalizes a list to append all the songs
-        myList = list()
-        # Initalizes a dict for sorted data
-        time_data = dict()
-        # Initalizes total listen time
-        total_listened_ms = 0
-
-    
-        # Loops through the amout of files you have (example: 4 loops)
-        for count in range(file_count):
-            # Changes file path
-            _file_path = f"{self.selected_directory_path}/StreamingHistory{str(count)}.json"
-
-            # Gets the raw json data
-            with open(_file_path, "r" , encoding="utf8") as f:
-                data = load(f)
-
-
-            # Loop through data and add to total_listened_ms
-            for i in data:
-                total_listened_ms += i["msPlayed"]
-
-
-            # Append based on the selected choice
-            if self.option1_cbx.isChecked():
-                for i in data:
-                    myList.append(i["artistName"]) 
-
-            elif self.option2_cbx.isChecked():
-                for i in data:
-                    myList.append(f"{i['artistName']}  ---  {i['trackName']}")                
-
-            elif self.option3_cbx.isChecked():
-                for i in data:
-                    myList.append(f"{i['trackName']}  ---  {i['artistName']}")
-                    
-            elif self.option4_cbx.isChecked():
-                # Creates elements in the dict for each artist with default value to avoid repeats
-                for i in data:
-                    time_data[i['artistName']] = 0
-
-                # Loops over all records and adds the artist played time
-                for i in data:
-                    time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
-
-                
-        # Updates the total time listened label
-        update_total_time(total_listened_ms)
         
+        # Checks if Folder and Checkbox have been selected
+        if self.selected_directory_path == None:
+            self.show_warning("Please select a folder")
+        elif not (self.option1_cbx.isChecked() or self.option2_cbx.isChecked() or self.option3_cbx.isChecked() or self.option4_cbx.isChecked()):
+            self.show_warning("Please select a checkbox")
+        
+        else:    
+            def dict_count_sort(input_list: list) -> dict:
+                # Sorts the dict based on second element (asending)
+                return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
 
-        # Print the time related data
-        if self.option4_cbx.isChecked():
-            # Sorts the dict (asending)
-            time_data = dict_count_sort(time_data)
+            def update_total_time(input_time_ms: float) -> None:
+                # Updates the total time label
+                self.total_time_label.setText(f"Total time listened: {input_time_ms/3600000:.2f} Hours")      
+                self.total_time_label.adjustSize()            
 
-            # Creates a list of strings
-            temp_lst = [str(time_data[i]) + " --- " + i for i in time_data]
+            def scroll_print(input_list: list) -> None:
+                # Creates temp string
+                temp_str = "".join(str(i) + "\n" for i in input_list)
 
-            # Print to Scroll label
-            scroll_print(temp_lst)
+                # Updates text for scroll label
+                self.scroll_label.setText(temp_str)
 
-        else:
-            # Sorts and Counts how many of each song is played
-            sorted_data = dict_count_sort(myList)
 
-            # Creates a list of strings
-            temp_lst = [str(sorted_data[i]) + " - " + i for i in sorted_data]
+            # Finds the total number of StreamingHistory files
+            file_count = len(glob1(self.selected_directory_path, "StreamingHistory*.json"))
 
-            # Print to Scroll label
-            scroll_print(temp_lst)
+            # Initalizes a list to append all the songs
+            myList = list()
+            # Initalizes a dict for sorted data
+            time_data = dict()
+            # Initalizes total listen time
+            total_listened_ms = 0
+
+        
+            # Loops through the amout of files you have (example: 4 loops)
+            for count in range(file_count):
+                # Changes file path
+                _file_path = f"{self.selected_directory_path}/StreamingHistory{str(count)}.json"
+
+                # Gets the raw json data
+                with open(_file_path, "r" , encoding="utf8") as f:
+                    data = load(f)
+
+
+                # Loop through data and add to total_listened_ms
+                for i in data:
+                    total_listened_ms += i["msPlayed"]
+
+
+                # Append based on the selected choice
+                if self.option1_cbx.isChecked():
+                    for i in data:
+                        myList.append(i["artistName"]) 
+
+                elif self.option2_cbx.isChecked():
+                    for i in data:
+                        myList.append(f"{i['artistName']}  ---  {i['trackName']}")                
+
+                elif self.option3_cbx.isChecked():
+                    for i in data:
+                        myList.append(f"{i['trackName']}  ---  {i['artistName']}")
+                        
+                elif self.option4_cbx.isChecked():
+                    # Creates elements in the dict for each artist with default value to avoid repeats
+                    for i in data:
+                        time_data[i['artistName']] = 0
+
+                    # Loops over all records and adds the artist played time
+                    for i in data:
+                        time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
+
+                    
+            # Updates the total time listened label
+            update_total_time(total_listened_ms)
+            
+
+            # Print the time related data
+            if self.option1_cbx.isChecked() or self.option2_cbx.isChecked() or self.option3_cbx.isChecked():
+                
+                # Sorts and Counts how many of each song is played
+                sorted_data = dict_count_sort(myList)
+
+                # Creates a list of strings
+                temp_lst = [str(sorted_data[i]) + " - " + i for i in sorted_data]
+
+                # Print to Scroll label
+                scroll_print(temp_lst)
+
+            elif self.option4_cbx.isChecked():
+                # Sorts the dict (asending)
+                time_data = dict_count_sort(time_data)
+
+                # Creates a list of strings
+                temp_lst = [str(time_data[i]) + " --- " + i for i in time_data]
+
+                # Print to Scroll label
+                scroll_print(temp_lst)
+        
 
 
 if __name__ == "__main__":
