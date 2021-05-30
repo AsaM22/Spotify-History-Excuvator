@@ -1,7 +1,5 @@
-# PyQt5 module
-from typing import cast
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox, QFileDialog
+# PyQt5 modules
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox, QFileDialog, QScrollArea, QWidget, QVBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
@@ -11,22 +9,58 @@ from json import load
 from glob import glob1
 from collections import Counter
 
-# Imports Scroll Label
-from custom_ScrollLabel import ScrollLabel
+# # Imports Scroll Label
+# from custom_ScrollLabel import ScrollLabel
 
 
 # TODO: 
-# 1: Needs to have check so they have selected everything before submitting display
-# 2: Try-Catch so the app doesn't crash
 # 3: README.md
-# 4: Class/Function Docstring
-# 5: Code Cleanup
 # 6: Pyinstaller
-# 7: Public on Github 
+
+
+class ScrollLabel(QScrollArea):
+    """Creates a Scrollable Label"""
+
+    def __init__(self, *args, **kwargs):
+        """Constructor"""
+        
+        QScrollArea.__init__(self, *args, **kwargs)
+
+	    # Makes widget resizable
+        self.setWidgetResizable(True)
+
+	    # Creates qwidget object
+        content = QWidget(self)
+        self.setWidget(content)     
+
+        # Creates Vertical box layout
+        lay = QVBoxLayout(content)   
+
+        # Creates label
+        self.label = QLabel(content) 
+
+        # Sets alignment to the text
+        self.label.setAlignment(Qt.AlignLeft | Qt.AlignTop)   
+
+        # Makes label multi-line
+        self.label.setWordWrap(True)       
+
+        # Adds label to the layout
+        lay.addWidget(self.label)
+
+	# Creates setText method
+    def setText(self, text):
+		# setting text to the label
+	    self.label.setText(text)
+
 
 
 class AppWindow(QMainWindow):
+    """The window for Spoty Excuvator"""
+
     def __init__(self):
+        """Initalizes UI"""
+        
         # Calls super constructor
         super(AppWindow, self).__init__()
 
@@ -38,6 +72,8 @@ class AppWindow(QMainWindow):
         
         
     def initUIVar(self):
+        """Initalizes variables for the widget position"""
+
         # Screen variables
         self.WINDOW_TITLE: str = "Spoty Excuvator"
         self.SCREEN_OFFSET_X: int = 175
@@ -80,6 +116,8 @@ class AppWindow(QMainWindow):
 
 
     def initUI(self):
+        """Creates widgets and sets properties"""
+
         # Setup screen
         self.setGeometry(self.SCREEN_OFFSET_X, self.SCREEN_OFFSET_Y, self.SCREEN_X, self.SCREEN_Y)
         self.setWindowTitle(self.WINDOW_TITLE)
@@ -93,7 +131,10 @@ class AppWindow(QMainWindow):
         self.directory_button.move(int((self.SCREEN_X*.5) - (self.directory_button.size().width()*.5)), self.DIRECTORY_BUTTON_Y)
         self.directory_button.clicked.connect(self.select_file_btn)
         
+
+        # Sets default path
         self.selected_directory_path = None
+
 
         # Setup Success Label
         self.success_label = QLabel("Selected Folder: Unsucessful", self)
@@ -115,7 +156,7 @@ class AppWindow(QMainWindow):
         self.option2_cbx.setGeometry(self.CBX_X, self.CBX_Y_2, self.CBX_WIDTH, self.CBX_HEIGHT)
         self.option3_cbx = QCheckBox("Track then Artist", self)
         self.option3_cbx.setGeometry(self.CBX_X, self.CBX_Y_3, self.CBX_WIDTH, self.CBX_HEIGHT)
-        self.option4_cbx = QCheckBox("Time per Artist", self)
+        self.option4_cbx = QCheckBox("Time per Artist (ms)", self)
         self.option4_cbx.setGeometry(self.CBX_X, self.CBX_Y_4, self.CBX_WIDTH, self.CBX_HEIGHT)
 
   
@@ -131,7 +172,7 @@ class AppWindow(QMainWindow):
         self.display_button.setFont(QFont(self.BUTTON_FONT, 20))
         self.display_button.adjustSize()
         self.display_button.move(self.DISPLAY_BUTTON_X, self.DISPLAY_BUTTON_Y)
-        self.display_button.clicked.connect(self.file_calculate)
+        self.display_button.clicked.connect(self.file_display)
 
 
 		# Creates Scroll label
@@ -140,6 +181,8 @@ class AppWindow(QMainWindow):
 
 
     def cbx_update(self, state) -> None:
+        """Makes sure only 1 checkbox is selected at a time"""
+
         # Checks if state is changed
         if state == Qt.Checked:
   
@@ -176,17 +219,32 @@ class AppWindow(QMainWindow):
                 self.option3_cbx.setChecked(False)
             
 
-    def show_warning(self, input_text: str) -> None:
+    def show_warning(self, input_text: str = "Warning") -> None:
+        """Displays a message box with Warning Icon
+
+        Args:
+            input_text (str): text to be displayed
+        """
+        
+        # Creates MessageBox object
         message_box = QMessageBox()
+
+        # Sets window title
         message_box.setWindowTitle("Warning!")
+
+        # Sets Warning icon
         message_box.setIcon(QMessageBox.Warning)
+
+        # Sets text to input text
         message_box.setText(input_text)
 
+        # Displays message box
         message_box.exec_()
 
 
-
     def select_file_btn(self) -> None:
+        """Opens File Dialog and sets directory path"""
+
         # Lets user select a path to data folder
         self.selected_directory_path = QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
@@ -196,30 +254,31 @@ class AppWindow(QMainWindow):
             self.success_label.setText("Selected Folder: Sucessful!")
 
 
-    def file_calculate(self) -> None:
+    def file_display(self) -> None:
+        """Gets and displays data"""
         
         # Checks if Folder and Checkbox have been selected
         if self.selected_directory_path == None:
             self.show_warning("Please select a folder")
+
         elif not (self.option1_cbx.isChecked() or self.option2_cbx.isChecked() or self.option3_cbx.isChecked() or self.option4_cbx.isChecked()):
             self.show_warning("Please select a checkbox")
         
         else:    
+            
             def dict_count_sort(input_list: list) -> dict:
-                # Sorts the dict based on second element (asending)
+                """Sorts the dict based on second element (asending)"""
                 return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
 
             def update_total_time(input_time_ms: float) -> None:
-                # Updates the total time label
+                """Updates the total time label"""
                 self.total_time_label.setText(f"Total time listened: {input_time_ms/3600000:.2f} Hours")      
                 self.total_time_label.adjustSize()            
 
             def scroll_print(input_list: list) -> None:
-                # Creates temp string
+                """Updates text for scroll label"""
                 temp_str = "".join(str(i) + "\n" for i in input_list)
-
-                # Updates text for scroll label
-                self.scroll_label.setText(temp_str)
+                self.scroll_label.setText(temp_str.rstrip('\n'))
 
 
             # Finds the total number of StreamingHistory files
@@ -297,7 +356,6 @@ class AppWindow(QMainWindow):
                 # Print to Scroll label
                 scroll_print(temp_lst)
         
-
 
 if __name__ == "__main__":
     # Starts app process
