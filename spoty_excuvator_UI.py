@@ -284,6 +284,10 @@ class AppWindow(QMainWindow):
             # Finds the total number of StreamingHistory files
             file_count = len(glob1(self.selected_directory_path, "StreamingHistory*.json"))
 
+            # Checks if the files exist
+            if file_count == 0:
+                self.show_warning("Please make sure to select the correct folder")
+
             # Initalizes a list to append all the songs
             myList = list()
             # Initalizes a dict for sorted data
@@ -329,7 +333,6 @@ class AppWindow(QMainWindow):
                     for i in data:
                         time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
 
-                    
             # Updates the total time listened label
             update_total_time(total_listened_ms)
             
