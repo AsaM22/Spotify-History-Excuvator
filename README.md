@@ -8,9 +8,9 @@ App that lets you go "analyze" your Spotify streaming history
 ### Before using the app:
 1. [Download Python3 on your computer](https://www.python.org/downloads/)
 2. [Download your Spotify data](https://www.spotify.com/us/account/privacy/)
-  * Link should take you to "Privacy Settings" Tab.
+    * Link should take you to "Privacy Settings" Tab.
   * Account -> "Privacy Settings" Tab -> "Request" (Scroll to the bottom)
-  * Check your email to complete the request
+   * Check your email to complete the request
   * Wait a few days for your data (Check email)
 3. Clone repo OR download "spoty_exuvator_UI.py" (Everything required is in 1 file.)
 
