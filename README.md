@@ -57,11 +57,11 @@ App that lets you go "analyze" your Spotify streaming history
 ## Understanding your data:
 After displaying your data
 1. If you selected "Most Played Artist" checkbox:
-..* This will display the artist and how many times you have listened to them (sorted)
+    * This will display the artist and how many times you have listened to them (sorted)
 2. If you selected "Artist then Track" OR "Track then Artist" checkbox:
-..* Tis will display how many times you have listened to a sertain song (sorted)
+    * Tis will display how many times you have listened to a sertain song (sorted)
 3. If you selected "Time per Artist (ms)" checkbox:
-..* This will display how many seconds you have spend listening to a sertain artist (sorted)
+    * This will display how many seconds you have spend listening to a sertain artist (sorted)
 
 
 Enjoy your data "analysis"!
