@@ -14,7 +14,6 @@ from collections import Counter
 
 
 # TODO: 
-# 3: README.md
 # 6: Pyinstaller
 
 
