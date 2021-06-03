@@ -1,5 +1,5 @@
 # PyQt5 modules
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox, QFileDialog, QScrollArea, QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QCheckBox, QLabel, QMessageBox, QFileDialog, QScrollArea, QWidget, QVBoxLayout, QComboBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import sys
@@ -107,11 +107,18 @@ class AppWindow(QMainWindow):
         self.TOTAL_TIME_LABEL_X: int = 550
         self.TOTAL_TIME_LABEL_Y: int = 150
 
-        # Scrollable Label variables
+        # Scrollable label variables
         self.SCROLL_DISPLAY_X: int = 450
         self.SCROLL_DISPLAY_Y: int = self.TOTAL_TIME_LABEL_Y + 20
         self.SCROLL_DISPLAY_WIDTH: int = 400
         self.SCROLL_DISPLAY_HEIGHT: int = 475
+
+        # ComboBox variables
+        self.COMBOX_X: int = 200
+        self.COMBOX_Y: int = 300
+        self.COMBOX_WIDTH: int = 95
+        self.COMBOX_HEIGHT: int = 50
+
 
 
     def initUI(self):
@@ -179,6 +186,15 @@ class AppWindow(QMainWindow):
         self.scroll_label.setGeometry(self.SCROLL_DISPLAY_X, self.SCROLL_DISPLAY_Y, self.SCROLL_DISPLAY_WIDTH, self.SCROLL_DISPLAY_HEIGHT)
 
 
+        # ComboBox selector
+        self.time_combox = QComboBox(self)
+        self.time_combox.addItem("Seconds")
+        self.time_combox.addItem("Hours")
+        self.time_combox.addItem("Days")
+        self.time_combox.setGeometry(self.COMBOX_X, self.COMBOX_Y, self.COMBOX_WIDTH, self.COMBOX_HEIGHT)
+        self.time_combox.activated[str].connect(self.combox_update) 
+
+
     def cbx_update(self, state) -> None:
         """Makes sure only 1 checkbox is selected at a time"""
 
@@ -217,6 +233,10 @@ class AppWindow(QMainWindow):
                 self.option2_cbx.setChecked(False)
                 self.option3_cbx.setChecked(False)
             
+    
+    def combox_update(self, selected) -> None:
+        self.played_time_option = selected
+
 
     def show_warning(self, input_text: str = "Warning") -> None:
         """Displays a message box with Warning Icon
@@ -294,7 +314,6 @@ class AppWindow(QMainWindow):
             # Initalizes total listen time
             total_listened_ms = 0
 
-        
             # Loops through the amout of files you have (example: 4 loops)
             for count in range(file_count):
                 # Changes file path
@@ -304,7 +323,7 @@ class AppWindow(QMainWindow):
                 with open(_file_path, "r" , encoding="utf8") as f:
                     data = load(f)
 
-
+# TODO: time per artist - self.played_time_option check before appending
                 # Loop through data and add to total_listened_ms
                 for i in data:
                     total_listened_ms += i["msPlayed"]
