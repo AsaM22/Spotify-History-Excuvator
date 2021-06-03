@@ -291,7 +291,6 @@ class AppWindow(QMainWindow):
             self.show_warning("Please select a checkbox")
         
         else:    
-            
             def dict_count_sort(input_list: list) -> dict:
                 """Sorts the dict based on second element (asending)"""
                 return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
@@ -356,11 +355,11 @@ class AppWindow(QMainWindow):
                     # Loops over all records, converts then adds the artist played time 
                     for i in data:
                         if self.played_time_option == 'Seconds':
-                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_SECONDS_FACTOR)   
+                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_SECONDS_FACTOR))  
                         elif self.played_time_option == 'Hours':
-                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_HOURS_FACTOR)
+                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_HOURS_FACTOR), 3)
                         elif self.played_time_option == 'Days':
-                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_DAYS_FACTOR)
+                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_DAYS_FACTOR), 6)
                     
                     # TODO: Needs to only show 2-3 decimal points
 
