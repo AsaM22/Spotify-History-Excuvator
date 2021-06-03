@@ -114,11 +114,18 @@ class AppWindow(QMainWindow):
         self.SCROLL_DISPLAY_HEIGHT: int = 475
 
         # ComboBox variables
-        self.COMBOX_X: int = 200
-        self.COMBOX_Y: int = 300
+        self.COMBOX_X: int = 215
+        self.COMBOX_Y: int = 270
         self.COMBOX_WIDTH: int = 95
-        self.COMBOX_HEIGHT: int = 50
+        self.COMBOX_HEIGHT: int = 25
 
+        # Time converstion
+        self.MS_SECONDS_FACTOR: float = .1
+        self.MS_HOURS_FACTOR: float = 1/3600000
+        self.MS_DAYS_FACTOR: float = 1/86400000
+
+        # Sets default time
+        self.played_time_option = 'Seconds'
 
 
     def initUI(self):
@@ -162,7 +169,7 @@ class AppWindow(QMainWindow):
         self.option2_cbx.setGeometry(self.CBX_X, self.CBX_Y_2, self.CBX_WIDTH, self.CBX_HEIGHT)
         self.option3_cbx = QCheckBox("Track then Artist", self)
         self.option3_cbx.setGeometry(self.CBX_X, self.CBX_Y_3, self.CBX_WIDTH, self.CBX_HEIGHT)
-        self.option4_cbx = QCheckBox("Time per Artist (ms)", self)
+        self.option4_cbx = QCheckBox("Time per Artist", self)
         self.option4_cbx.setGeometry(self.CBX_X, self.CBX_Y_4, self.CBX_WIDTH, self.CBX_HEIGHT)
 
   
@@ -242,7 +249,7 @@ class AppWindow(QMainWindow):
         """Displays a message box with Warning Icon
 
         Args:
-            input_text (str): text to be displayed
+            input_text (str): text to be displayed (default text is: "Warning")
         """
         
         # Creates MessageBox object
@@ -323,16 +330,15 @@ class AppWindow(QMainWindow):
                 with open(_file_path, "r" , encoding="utf8") as f:
                     data = load(f)
 
-# TODO: time per artist - self.played_time_option check before appending
                 # Loop through data and add to total_listened_ms
                 for i in data:
-                    total_listened_ms += i["msPlayed"]
+                    total_listened_ms += i['msPlayed']
 
 
                 # Append based on the selected choice
                 if self.option1_cbx.isChecked():
                     for i in data:
-                        myList.append(i["artistName"]) 
+                        myList.append(i['artistName']) 
 
                 elif self.option2_cbx.isChecked():
                     for i in data:
@@ -347,9 +353,17 @@ class AppWindow(QMainWindow):
                     for i in data:
                         time_data[i['artistName']] = 0
 
-                    # Loops over all records and adds the artist played time
+                    # Loops over all records, converts then adds the artist played time 
                     for i in data:
-                        time_data[i['artistName']] = time_data[i['artistName']] + i['msPlayed']
+                        if self.played_time_option == 'Seconds':
+                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_SECONDS_FACTOR)   
+                        elif self.played_time_option == 'Hours':
+                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_HOURS_FACTOR)
+                        elif self.played_time_option == 'Days':
+                            time_data[i['artistName']] = time_data[i['artistName']] + (i['msPlayed'] * self.MS_DAYS_FACTOR)
+                    
+                    # TODO: Needs to only show 2-3 decimal points
+
 
             # Updates the total time listened label
             update_total_time(total_listened_ms)
