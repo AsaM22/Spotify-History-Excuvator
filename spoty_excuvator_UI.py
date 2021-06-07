@@ -15,7 +15,6 @@ from collections import Counter
 
 # TODO: 
 # 1: Pyinstaller
-# 2: Reverse list option (accend/decent)
 
 
 class ScrollLabel(QScrollArea):
@@ -48,10 +47,16 @@ class ScrollLabel(QScrollArea):
         # Adds label to the layout
         lay.addWidget(self.label)
 
-	# Creates setText method
+	
     def setText(self, text):
+        """Creates setText method
+
+        Args:
+            text (str): text to be be changed to
+        """
+
 		# setting text to the label
-	    self.label.setText(text)
+        self.label.setText(text)
 
 
 
@@ -64,7 +69,7 @@ class AppWindow(QMainWindow):
         # Calls super constructor
         super(AppWindow, self).__init__()
 
-        # Calls Variable method
+        # Calls Variable Setup method
         self.initUIVar()
 
         # Calls UI method
@@ -131,6 +136,12 @@ class AppWindow(QMainWindow):
         # Creates round variables
         self.ROUND_HOUR_PLACE: int = 3
         self.ROUND_DAY_PLACE: int = 5
+
+        # Toggle button variables
+        self.TOGGLE_BUTTON_X: int = 238
+        self.TOGGLE_BUTTON_Y: int = 444
+        self.TOGGLE_BUTTON_WIDTH: int = 95
+        self.TOGGLE_BUTTON_HEIGHT: int = 20
 
 
     def initUI(self):
@@ -204,7 +215,16 @@ class AppWindow(QMainWindow):
         self.time_combox.addItem("Hours")
         self.time_combox.addItem("Days")
         self.time_combox.setGeometry(self.COMBOX_X, self.COMBOX_Y, self.COMBOX_WIDTH, self.COMBOX_HEIGHT)
-        self.time_combox.activated[str].connect(self.combox_update) 
+        self.time_combox.activated[str].connect(self.combox_update)
+
+
+
+        # Sort toggle button
+        self.toggle_button = QPushButton('Descending Sort', self)
+        self.toggle_button.setGeometry(self.TOGGLE_BUTTON_X, self.TOGGLE_BUTTON_Y, self.TOGGLE_BUTTON_WIDTH, self.TOGGLE_BUTTON_HEIGHT)
+        self.toggle_button.setCheckable(True)
+        self.toggle_button.clicked.connect(self.toggle_btn_update)
+        self.toggle_button.setStyleSheet("background-color : lightgrey")
 
 
     def cbx_update(self, state) -> None:
@@ -247,7 +267,27 @@ class AppWindow(QMainWindow):
             
     
     def combox_update(self, selected) -> None:
+        """Sets the selected display time option to a global variable"""
         self.played_time_option = selected
+
+
+    def toggle_btn_update(self) -> None:
+        """Changes toggle button text when pressed"""
+
+        # Checks if it is checked
+        if self.toggle_button.isChecked():
+			# Sets background color to light-blue
+            self.toggle_button.setStyleSheet("background-color : lightblue")
+
+            # Changes display text
+            self.toggle_button.setText("Ascending Sort")
+
+        else:
+			# Sets background color to light-blue
+            self.toggle_button.setStyleSheet("background-color : lightgrey")
+
+            # Changes display text
+            self.toggle_button.setText("Descending Sort")
 
 
     def show_warning(self, input_text: str = "Warning") -> None:
@@ -279,7 +319,7 @@ class AppWindow(QMainWindow):
         # Lets user select a path to data folder
         self.selected_directory_path = QFileDialog.getExistingDirectory(self, 'Select Spotify Data Folder')
 
-        # Updates the file successfully found label
+        # Updates the "file successfully found" label
         if self.selected_directory_path:
             self.success_label.setStyleSheet("color: green; font-size: 15px;")
             self.success_label.setText("Selected Folder: Sucessful!")
@@ -298,15 +338,23 @@ class AppWindow(QMainWindow):
         else:    
             def dict_count_sort(input_list: list) -> dict:
                 """Sorts the dict based on second element (asending)"""
+
                 return {k: v for k, v in sorted(Counter(input_list).items(), key=lambda item: item[1])} 
 
             def update_total_time(input_time_ms: float) -> None:
                 """Updates the total time label"""
+
                 self.total_time_label.setText(f"Total time listened: {input_time_ms/3600000:.2f} Hours")      
                 self.total_time_label.adjustSize()            
 
             def scroll_print(input_list: list) -> None:
                 """Updates text for scroll label"""
+                
+                # Reverses list based on toggle button choice
+                if self.toggle_button.text() == "Descending Sort":
+                    input_list.reverse()
+
+                # Displays text to UI scroll label
                 temp_str = "".join(str(i) + "\n" for i in input_list)
                 self.scroll_label.setText(temp_str.rstrip('\n'))
 
