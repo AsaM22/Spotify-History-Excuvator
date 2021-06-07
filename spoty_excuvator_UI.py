@@ -14,7 +14,8 @@ from collections import Counter
 
 
 # TODO: 
-# 6: Pyinstaller
+# 1: Pyinstaller
+# 2: Reverse list option (accend/decent)
 
 
 class ScrollLabel(QScrollArea):
@@ -124,8 +125,12 @@ class AppWindow(QMainWindow):
         self.MS_HOURS_FACTOR: float = 1/3600000
         self.MS_DAYS_FACTOR: float = 1/86400000
 
-        # Sets default time
+        # Sets default time for comboBox
         self.played_time_option = 'Seconds'
+
+        # Creates round variables
+        self.ROUND_HOUR_PLACE: int = 3
+        self.ROUND_DAY_PLACE: int = 5
 
 
     def initUI(self):
@@ -357,9 +362,9 @@ class AppWindow(QMainWindow):
                         if self.played_time_option == 'Seconds':
                             time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_SECONDS_FACTOR))  
                         elif self.played_time_option == 'Hours':
-                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_HOURS_FACTOR), 3)
+                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_HOURS_FACTOR), self.ROUND_HOUR_PLACE)
                         elif self.played_time_option == 'Days':
-                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_DAYS_FACTOR), 6)
+                            time_data[i['artistName']] = round(time_data[i['artistName']] + (i['msPlayed'] * self.MS_DAYS_FACTOR), self.ROUND_DAY_PLACE)
                     
                     # TODO: Needs to only show 2-3 decimal points
 
