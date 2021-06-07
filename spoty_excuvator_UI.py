@@ -138,9 +138,9 @@ class AppWindow(QMainWindow):
         self.ROUND_DAY_PLACE: int = 5
 
         # Toggle button variables
-        self.TOGGLE_BUTTON_X: int = 238
+        self.TOGGLE_BUTTON_X: int = 225
         self.TOGGLE_BUTTON_Y: int = 444
-        self.TOGGLE_BUTTON_WIDTH: int = 95
+        self.TOGGLE_BUTTON_WIDTH: int = 105
         self.TOGGLE_BUTTON_HEIGHT: int = 20
 
 
