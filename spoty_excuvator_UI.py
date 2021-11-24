@@ -48,15 +48,15 @@ class ScrollLabel(QScrollArea):
         lay.addWidget(self.label)
 
 	
-    def setText(self, text):
+    def setText(self, input_text):
         """Creates setText method
 
         Args:
             text (str): text to be be changed to
         """
 
-		# setting text to the label
-        self.label.setText(text)
+		# Setting input_text to the label
+        self.label.setText(input_text)
 
 
 
